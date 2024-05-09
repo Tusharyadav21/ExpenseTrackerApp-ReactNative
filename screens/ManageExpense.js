@@ -8,11 +8,14 @@ import { deleteExpense, storeExpense, updateExpense } from '../util/http';
 import { GlobalStyles } from '../constants/styles';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
+import { AuthContext } from '../store/AuthContext';
 
 const ManageExpense = ({ route, navigation }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState();
   const expensectx = useContext(ExpensesContext);
+  const authctx = useContext(AuthContext);
+  const token  = authctx.token;
 
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId
@@ -30,7 +33,7 @@ const ManageExpense = ({ route, navigation }) => {
   async function deleteExpenseHandler() {
     setIsSubmitting(true);
     try {
-      await deleteExpense(editedExpenseId);
+      await deleteExpense(editedExpenseId, token);
       expensectx.deleteExpense(editedExpenseId);
       navigation.goBack()
     }
@@ -49,9 +52,9 @@ const ManageExpense = ({ route, navigation }) => {
     try {
       if (isEditing) {
         expensectx.updateExpense(editedExpenseId, expenseData);
-        await updateExpense(editedExpenseId, expenseData);
+        await updateExpense(editedExpenseId, expenseData, token);
       } else {
-        const id = await storeExpense(expenseData);
+        const id = await storeExpense(expenseData, token);
         expensectx.addExpense({ ...expenseData, id: id });
       }
       navigation.goBack()

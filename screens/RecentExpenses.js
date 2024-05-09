@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import ExpensesOutput from '../components/ExpensesOutput'
 import { getDateMinusDays } from '../util/date';
 import { ExpensesContext } from '../store/ExpenseContext';
+import { AuthContext } from '../store/AuthContext';
 import { fetchExpenses } from '../util/http';
 import LoadingOverlay from '../components/UI/LoadingOverlay';
 import ErrorOverlay from '../components/UI/ErrorOverlay';
@@ -10,12 +11,14 @@ const RecentExpenses = () => {
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState();
   const expensesctx = useContext(ExpensesContext);
+  const authCtx = useContext(AuthContext);
+  const token = authCtx.token;
 
   useEffect(() => {
     async function getExpenses() {
       setIsFetching(true);
       try {
-        const expenses = await fetchExpenses();
+        const expenses = await fetchExpenses(token);
         expensesctx.setExpenses(expenses);
       }
       catch (err) {

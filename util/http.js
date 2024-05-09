@@ -3,14 +3,14 @@ import axios from 'axios';
 const BACKEND_URL =
     'https://expensetracker-21-default-rtdb.asia-southeast1.firebasedatabase.app';
 
-export async function storeExpense(expenseData) {
-    const response = await axios.post(BACKEND_URL + '/expenses.json', expenseData);
+export async function storeExpense(expenseData, token) {
+    const response = await axios.post(BACKEND_URL + '/expenses.json?auth=' + token, expenseData);
     const id = response.data.name;
     return id;
 }
 
-export async function fetchExpenses() {
-    const response = await axios.get(BACKEND_URL + '/expenses.json');
+export async function fetchExpenses(token) {
+    const response = await axios.get(BACKEND_URL + '/expenses.json?auth=' + token);
 
     const expenses = [];
 
@@ -27,10 +27,10 @@ export async function fetchExpenses() {
     return expenses;
 }
 
-export function updateExpense(id, expenseData) {
-    return axios.put(BACKEND_URL + `/expenses/${id}.json`, expenseData);
+export function updateExpense(id, expenseData, token) {
+    return axios.put(BACKEND_URL + `/expenses/${id}.json?auth=` + token, expenseData);
 }
 
-export function deleteExpense(id) {
-    return axios.delete(BACKEND_URL + `/expenses/${id}.json`);
+export function deleteExpense(id, token) {
+    return axios.delete(BACKEND_URL + `/expenses/${id}.json?auth=` + token);
 }
